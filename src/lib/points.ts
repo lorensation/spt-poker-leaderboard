@@ -1,4 +1,5 @@
-export function finishingPoints(position: number) {
+export function finishingPoints(position: number | null) {
+  if (position === null) return 0;
   return (
     (
       {
@@ -17,7 +18,7 @@ export function finishingPoints(position: number) {
 }
 
 export function votePoints(rank: 1 | 2 | 3) {
-  return rank === 1 ? 3 : rank === 2 ? 2 : 1;
+  return rank === 1 ? 6 : rank === 2 ? 4 : 2;
 }
 
 export function starRating(totalPoints: number, gamesPlayed: number) {

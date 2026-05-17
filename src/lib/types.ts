@@ -1,6 +1,10 @@
 export type GameStatus = "draft" | "voting_open" | "voting_closed" | "completed";
 export type LeaderboardKind = "money" | "points";
 
+export type ActionResult<T = unknown> =
+  | { success: true; message: string; data?: T }
+  | { success: false; message: string; error?: string };
+
 export type Player = {
   id: string;
   nickname: string;
@@ -24,11 +28,10 @@ export type GameResult = {
   id: string;
   game_id: string;
   player_id: string;
-  finish_position: number;
+  finish_position: number | null;
+  money_spent: number;
   money_earned: number;
-  buyins: number;
-  rebuys: number;
-  addon: boolean;
+  net_profit: number;
   finishing_points: number;
   notes: string | null;
   players?: Player;

@@ -37,7 +37,7 @@ export function GameCard({ game }: { game: GameCardData }) {
         <div className="flex flex-wrap gap-2">
           {game.top_three.map((result) => (
             <Badge key={result.id} variant="outline" className="border-amber-500/30">
-              #{result.finish_position} {result.players.nickname}
+              {result.finish_position === null ? "NQ" : `#${result.finish_position}`} {result.players.nickname}
             </Badge>
           ))}
         </div>

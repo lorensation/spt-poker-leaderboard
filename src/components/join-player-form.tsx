@@ -2,15 +2,17 @@
 
 import { useState, useTransition } from "react";
 import { UserPlus } from "lucide-react";
+import { toast } from "sonner";
 
-import { createPlayer, type ActionState } from "@/app/actions/players";
+import { createPlayer, type PlayerActionData } from "@/app/actions/players";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import type { ActionResult } from "@/lib/types";
 
 const TOKEN_KEY = "spt_player_tokens";
 
 export function JoinPlayerForm() {
-  const [state, setState] = useState<ActionState | null>(null);
+  const [state, setState] = useState<ActionResult<PlayerActionData> | null>(null);
   const [isPending, startTransition] = useTransition();
 
   return (
@@ -21,11 +23,14 @@ export function JoinPlayerForm() {
         const formData = new FormData(event.currentTarget);
         startTransition(async () => {
           const result = await createPlayer(formData);
-          if (result.ok && result.playerId && result.token) {
+          if (result.success && result.data?.playerId && result.data.token) {
             const stored = JSON.parse(localStorage.getItem(TOKEN_KEY) ?? "{}") as Record<string, string>;
-            stored[result.playerId] = result.token;
+            stored[result.data.playerId] = result.data.token;
             localStorage.setItem(TOKEN_KEY, JSON.stringify(stored));
             event.currentTarget.reset();
+            toast.success(result.message);
+          } else {
+            toast.error(result.message);
           }
           setState(result);
         });
@@ -37,7 +42,7 @@ export function JoinPlayerForm() {
         Join
       </Button>
       {state ? (
-        <p className={state.ok ? "text-sm text-emerald-300" : "text-sm text-red-300"}>{state.message}</p>
+        <p className={state.success ? "text-sm text-emerald-300" : "text-sm text-red-300"}>{state.message}</p>
       ) : null}
     </form>
   );

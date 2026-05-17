@@ -16,7 +16,10 @@ export default async function PlayerProfilePage({ params }: { params: Promise<{ 
   const history = (await getPlayerHistory(player.player_id)).sort(
     (a, b) => new Date(b.games.played_at).getTime() - new Date(a.games.played_at).getTime()
   );
-  const bestFinish = history.reduce((best, result) => Math.min(best, result.finish_position), Number.POSITIVE_INFINITY);
+  const bestFinish = history.reduce(
+    (best, result) => (result.finish_position === null ? best : Math.min(best, result.finish_position)),
+    Number.POSITIVE_INFINITY
+  );
   const latest = history[0];
 
   return (
@@ -60,7 +63,9 @@ export default async function PlayerProfilePage({ params }: { params: Promise<{ 
                 <TableHead>Date</TableHead>
                 <TableHead>Game</TableHead>
                 <TableHead className="text-right">Finish</TableHead>
-                <TableHead className="text-right">Money</TableHead>
+                <TableHead className="text-right">Spent</TableHead>
+                <TableHead className="text-right">Earned</TableHead>
+                <TableHead className="text-right">Net</TableHead>
                 <TableHead className="text-right">Points</TableHead>
               </TableRow>
             </TableHeader>
@@ -69,8 +74,10 @@ export default async function PlayerProfilePage({ params }: { params: Promise<{ 
                 <TableRow key={result.id}>
                   <TableCell>{formatDate(result.games.played_at)}</TableCell>
                   <TableCell><Link className="hover:text-amber-200" href={`/games/${result.games.id}`}>{result.games.title}</Link></TableCell>
-                  <TableCell className="text-right">#{result.finish_position}</TableCell>
+                  <TableCell className="text-right">{result.finish_position === null ? "NQ" : `#${result.finish_position}`}</TableCell>
+                  <TableCell className="text-right font-mono">{formatCurrency(result.money_spent)}</TableCell>
                   <TableCell className="text-right font-mono">{formatCurrency(result.money_earned)}</TableCell>
+                  <TableCell className="text-right font-mono">{formatCurrency(result.net_profit)}</TableCell>
                   <TableCell className="text-right">{result.finishing_points}</TableCell>
                 </TableRow>
               ))}

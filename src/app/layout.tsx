@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Toaster } from "sonner";
 import { AppShell } from "@/components/app-shell";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import "./globals.css";
@@ -32,6 +33,7 @@ export default function RootLayout({
       <body className="min-h-full">
         <TooltipProvider>
           <AppShell>{children}</AppShell>
+          <Toaster richColors position="top-right" />
         </TooltipProvider>
       </body>
     </html>

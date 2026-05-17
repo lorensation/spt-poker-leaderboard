@@ -74,13 +74,7 @@ export async function getGameDetail(id: string) {
 
   return {
     ...card,
-    results: card.top_three
-      .concat(
-        ((gameResponse.data as unknown as { game_results: ResultWithPlayer[] }).game_results ?? []).filter(
-          (result) => result.finish_position > 3
-        )
-      )
-      .sort((a, b) => a.finish_position - b.finish_position),
+    results: sortResults((gameResponse.data as unknown as { game_results: ResultWithPlayer[] }).game_results ?? []),
     votes,
     vote_totals: voteTotals,
     mvp: voteTotals[0] ?? null,
@@ -88,8 +82,8 @@ export async function getGameDetail(id: string) {
 }
 
 function normalizeGameCard(game: Game & { game_results?: ResultWithPlayer[] }): GameCardData {
-  const results = [...(game.game_results ?? [])].sort((a, b) => a.finish_position - b.finish_position);
-  const totalPot = results.reduce((sum, result) => sum + Math.max(0, Number(result.money_earned)), 0);
+  const results = sortResults(game.game_results ?? []);
+  const totalPot = results.reduce((sum, result) => sum + Math.max(0, Number(result.money_spent ?? 0)), 0);
   return {
     id: game.id,
     title: game.title,
@@ -103,4 +97,13 @@ function normalizeGameCard(game: Game & { game_results?: ResultWithPlayer[] }): 
     winner: results[0]?.players ?? null,
     top_three: results.slice(0, 3),
   };
+}
+
+function sortResults<T extends { finish_position: number | null }>(results: T[]) {
+  return [...results].sort((a, b) => {
+    if (a.finish_position === null && b.finish_position === null) return 0;
+    if (a.finish_position === null) return 1;
+    if (b.finish_position === null) return -1;
+    return a.finish_position - b.finish_position;
+  });
 }

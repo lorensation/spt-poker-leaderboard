@@ -1,5 +1,6 @@
 import "server-only";
 
+import { logTransaction } from "@/lib/logger";
 import { getAdminSupabase } from "@/lib/supabase/server";
 
 export async function uploadAvatar(file: File, prefix: string) {
@@ -14,7 +15,10 @@ export async function uploadAvatar(file: File, prefix: string) {
     upsert: true,
   });
 
-  if (error) throw new Error(error.message);
+  if (error) {
+    logTransaction({ operation: "upload_avatar", success: false, payload: { prefix, size: file.size, type: file.type }, error });
+    throw new Error(error.message);
+  }
 
   const { data } = supabase.storage.from("avatars").getPublicUrl(path);
   return data.publicUrl;
