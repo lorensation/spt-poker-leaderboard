@@ -42,7 +42,7 @@ export function PlayerStatPopover({ player }: { player: PlayerStats }) {
 
 function Stat({ label, value, icon }: { label: string; value: string; icon?: React.ReactNode }) {
   return (
-    <div className="rounded-md border border-white/10 bg-white/[0.03] p-3">
+    <div className="rounded-md border border-white/10 bg-white/3 p-3">
       <div className="flex items-center gap-1.5 text-xs text-zinc-400">
         {icon}
         {label}

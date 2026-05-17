@@ -26,7 +26,7 @@ export function GameCard({ game }: { game: GameCardData }) {
       </CardHeader>
       <CardContent className="space-y-4">
         {game.winner ? (
-          <div className="flex items-center gap-3 rounded-md border border-white/10 bg-white/[0.03] p-3">
+          <div className="flex items-center gap-3 rounded-md border border-white/10 bg-white/3 p-3">
             <PlayerAvatar nickname={game.winner.nickname} avatarUrl={game.winner.avatar_url} className="h-10 w-10" />
             <div>
               <div className="text-xs text-zinc-400">Winner</div>

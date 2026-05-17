@@ -72,7 +72,7 @@ export function AdminGameForm({ players }: { players: Player[] }) {
         </div>
         <div className="space-y-3">
           {rows.map((row, index) => (
-            <div key={index} className="grid gap-3 rounded-lg border border-white/10 bg-white/[0.03] p-3 lg:grid-cols-[1.5fr_repeat(5,1fr)]">
+            <div key={index} className="grid gap-3 rounded-lg border border-white/10 bg-white/3 p-3 lg:grid-cols-[1.5fr_repeat(5,1fr)]">
               <Select
                 value={row.player_id}
                 onValueChange={(value) => updateRow(setRows, index, { player_id: value })}

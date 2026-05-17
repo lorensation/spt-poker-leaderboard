@@ -15,7 +15,7 @@ export function Podium({ players, kind }: { players: PlayerStats[]; kind: Leader
   const ordered = [players[1], players[0], players[2]].filter(Boolean);
   if (ordered.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed border-amber-500/20 bg-white/[0.03] p-8 text-center text-zinc-400">
+      <div className="rounded-lg border border-dashed border-amber-500/20 bg-white/3 p-8 text-center text-zinc-400">
         Add players and game results to light up the podium.
       </div>
     );
