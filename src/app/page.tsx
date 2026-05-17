@@ -3,7 +3,6 @@ import { Crown, Trophy, Vote, WalletCards } from "lucide-react";
 
 import { JoinPlayerForm } from "@/components/join-player-form";
 import { Podium } from "@/components/podium";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency, formatDate } from "@/lib/format";

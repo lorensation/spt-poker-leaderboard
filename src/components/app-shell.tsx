@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Club, Menu } from "lucide-react";
+import Image from "next/image";
+import { Menu } from "lucide-react";
 
 import { GlobalSearch } from "@/components/global-search";
 import { Button } from "@/components/ui/button";
@@ -20,8 +21,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <header className="sticky top-0 z-40 border-b border-white/10 bg-zinc-950/80 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
           <Link href="/" className="flex items-center gap-2 font-semibold">
-            <span className="flex h-9 w-9 items-center justify-center rounded-md bg-emerald-800 text-amber-200">
-              <Club className="h-5 w-5" />
+            <span className="relative h-9 w-9 overflow-hidden rounded-md border border-amber-300/30 bg-zinc-950">
+              <Image
+                src="/spt-logo.jpeg"
+                alt="SPT Poker Leaderboard logo"
+                fill
+                sizes="36px"
+                className="object-cover"
+                priority
+              />
             </span>
             <span>SPT Poker Leaderboard</span>
           </Link>
