@@ -12,6 +12,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { captureSubmittedForm } from "@/lib/form-submission";
 import type { GameCardData, GameStatus, Player } from "@/lib/types";
 
 export function AdminCreatePlayerForm() {
@@ -22,12 +23,12 @@ export function AdminCreatePlayerForm() {
       className="space-y-3"
       onSubmit={(event) => {
         event.preventDefault();
-        const formData = new FormData(event.currentTarget);
+        const submission = captureSubmittedForm(event.currentTarget);
         startTransition(async () => {
-          const result = await adminCreatePlayer(formData);
+          const result = await adminCreatePlayer(submission.formData);
           if (result.success) {
             toast.success(result.message);
-            event.currentTarget.reset();
+            submission.form.reset();
           } else {
             toast.error(result.message);
           }

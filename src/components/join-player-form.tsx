@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { createPlayer, type PlayerActionData } from "@/app/actions/players";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { captureSubmittedForm } from "@/lib/form-submission";
 import type { ActionResult } from "@/lib/types";
 
 const TOKEN_KEY = "spt_player_tokens";
@@ -20,14 +21,14 @@ export function JoinPlayerForm() {
       className="grid gap-3 sm:grid-cols-[1fr_auto]"
       onSubmit={(event) => {
         event.preventDefault();
-        const formData = new FormData(event.currentTarget);
+        const submission = captureSubmittedForm(event.currentTarget);
         startTransition(async () => {
-          const result = await createPlayer(formData);
+          const result = await createPlayer(submission.formData);
           if (result.success && result.data?.playerId && result.data.token) {
             const stored = JSON.parse(localStorage.getItem(TOKEN_KEY) ?? "{}") as Record<string, string>;
             stored[result.data.playerId] = result.data.token;
             localStorage.setItem(TOKEN_KEY, JSON.stringify(stored));
-            event.currentTarget.reset();
+            submission.form.reset();
             toast.success(result.message);
           } else {
             toast.error(result.message);
