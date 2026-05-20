@@ -2,7 +2,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { PlayerAvatar } from "@/components/player-avatar";
-import { PlayerProfileEditor } from "@/components/player-profile-editor";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -24,7 +23,7 @@ export default async function PlayerProfilePage({ params }: { params: Promise<{ 
 
   return (
     <div className="space-y-6">
-      <section className="grid gap-6 lg:grid-cols-[1fr_22rem]">
+      <section>
         <Card className="border-amber-500/20 bg-zinc-950/80">
           <CardContent className="flex flex-col gap-6 p-6 md:flex-row md:items-center">
             <PlayerAvatar nickname={player.nickname} avatarUrl={player.avatar_url} className="h-28 w-28" />
@@ -47,10 +46,6 @@ export default async function PlayerProfilePage({ params }: { params: Promise<{ 
               </div>
             </div>
           </CardContent>
-        </Card>
-        <Card className="border-amber-500/20 bg-zinc-950/80">
-          <CardHeader><CardTitle>Edit profile</CardTitle></CardHeader>
-          <CardContent><PlayerProfileEditor player={player} /></CardContent>
         </Card>
       </section>
 

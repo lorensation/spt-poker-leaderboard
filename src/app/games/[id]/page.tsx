@@ -9,13 +9,17 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { formatCurrency, formatDate } from "@/lib/format";
+import { getCurrentPlayer } from "@/lib/auth/player";
 import { getGameDetail } from "@/lib/queries/games";
 import { isAdminSession } from "@/lib/security/admin";
 
 export default async function GameDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const [game, isAdmin] = await Promise.all([getGameDetail(id), isAdminSession()]);
+  const [game, isAdmin, currentPlayer] = await Promise.all([getGameDetail(id), isAdminSession(), getCurrentPlayer()]);
   if (!game) notFound();
+  const currentPlayerVoted = currentPlayer
+    ? game.votes.some((vote) => vote.voter_player_id === currentPlayer.playerId)
+    : false;
 
   return (
     <div className="space-y-6">
@@ -25,8 +29,10 @@ export default async function GameDetailPage({ params }: { params: Promise<{ id:
           <h1 className="mt-3 text-3xl font-bold">{game.title}</h1>
           <p className="mt-2 text-zinc-400">{formatDate(game.played_at)} · {game.player_count} players · {formatCurrency(game.total_pot)} total pot</p>
         </div>
-        {game.status === "voting_open" ? (
+        {game.status === "voting_open" && !currentPlayerVoted ? (
           <Button asChild><Link href={`/vote/${game.id}`}>Vote top 3</Link></Button>
+        ) : game.status === "voting_open" && currentPlayerVoted ? (
+          <div className="rounded-md border border-amber-500/20 px-4 py-2 text-sm font-medium text-amber-100">Vote submitted</div>
         ) : null}
       </div>
 

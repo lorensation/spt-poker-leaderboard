@@ -169,10 +169,11 @@ function MoneyInput({ label, value, onChange }: { label: string; value: string; 
       <Input
         type="number"
         min={0}
-        step="0.01"
-        inputMode="decimal"
+        step={5}
+        inputMode="numeric"
         value={value}
         onChange={(event) => onChange(event.target.value)}
+        onWheel={(event) => event.currentTarget.blur()}
         onBlur={() => {
           if (value === "") onChange("0");
           else if (Number(value) < 0) onChange("0");

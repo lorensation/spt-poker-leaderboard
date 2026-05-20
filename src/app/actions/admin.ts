@@ -3,12 +3,12 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import { finishingPoints } from "@/lib/points";
+import { finishingPointsByPosition } from "@/lib/points";
 import { logTransaction, safeErrorMessage } from "@/lib/logger";
 import { clearAdminSession, requireAdmin, setAdminSession, verifyAdminPassword } from "@/lib/security/admin";
 import { getAdminSupabase } from "@/lib/supabase/server";
 import type { ActionResult, GameStatus } from "@/lib/types";
-import { parseGamePayloadFromFormData } from "@/lib/validation/game-results";
+import { parseGamePayloadFromFormData, parseMoneyAmount } from "@/lib/validation/game-results";
 
 export async function loginAdmin(formData: FormData) {
   const password = String(formData.get("password") ?? "");
@@ -138,17 +138,42 @@ export async function updateGameResult(formData: FormData): Promise<ActionResult
 
   try {
     await requireAdmin();
-    const { error } = await getAdminSupabase()
+    const supabase = getAdminSupabase();
+    const { data: currentResults, error: currentResultsError } = await supabase
+      .from("game_results")
+      .select("id,finish_position")
+      .eq("game_id", gameId);
+    if (currentResultsError) throw currentResultsError;
+
+    const updatedResults = (currentResults ?? []).map((result) => ({
+      id: result.id as string,
+      finish_position: result.id === resultId ? finishPosition : (result.finish_position as number | null),
+    }));
+    const targetIndex = updatedResults.findIndex((result) => result.id === resultId);
+    if (targetIndex === -1) return { success: false, message: "Game result not found." };
+    const points = finishingPointsByPosition(updatedResults.map((result) => result.finish_position));
+
+    const { error } = await supabase
       .from("game_results")
       .update({
         finish_position: finishPosition,
         money_spent: moneySpent,
         money_earned: moneyEarned,
-        finishing_points: finishingPoints(finishPosition),
+        finishing_points: points[targetIndex] ?? 0,
       })
       .eq("id", resultId);
 
     if (error) throw error;
+
+    for (const [index, result] of updatedResults.entries()) {
+      if (result.id === resultId) continue;
+      const { error: pointsError } = await supabase
+        .from("game_results")
+        .update({ finishing_points: points[index] ?? 0 })
+        .eq("id", result.id);
+      if (pointsError) throw pointsError;
+    }
+
     revalidateGamePaths(gameId);
     logTransaction({ operation: "update_game_result", success: true, payload: { gameId, resultId } });
     return { success: true, message: "Game result updated." };
@@ -183,8 +208,5 @@ function revalidateGamePaths(gameId: string) {
 }
 
 function normalizeMoneyFormValue(value: FormDataEntryValue | null) {
-  if (value === null || value === "") return 0;
-  const parsed = Number(value);
-  if (!Number.isFinite(parsed) || parsed < 0) return null;
-  return Number(parsed.toFixed(2));
+  return parseMoneyAmount(value);
 }

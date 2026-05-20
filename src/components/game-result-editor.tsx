@@ -66,10 +66,11 @@ function MoneyInput({ value, onChange, label }: { value: string; onChange: (valu
       aria-label={label}
       type="number"
       min={0}
-      step="0.01"
-      inputMode="decimal"
+      step={5}
+      inputMode="numeric"
       value={value}
       onChange={(event) => onChange(event.target.value)}
+      onWheel={(event) => event.currentTarget.blur()}
       onBlur={() => {
         if (value === "" || Number(value) < 0) onChange("0");
       }}

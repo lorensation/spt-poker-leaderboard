@@ -81,9 +81,24 @@ export async function getGameDetail(id: string) {
   } satisfies GameDetailData;
 }
 
+export async function hasPlayerVoted(gameId: string, playerId: string) {
+  noStore();
+  if (!isSupabaseConfigured()) return false;
+  const { data, error } = await getPublicSupabase()
+    .from("game_votes")
+    .select("id")
+    .eq("game_id", gameId)
+    .eq("voter_player_id", playerId)
+    .limit(1);
+  if (error) return false;
+  return (data ?? []).length > 0;
+}
+
 function normalizeGameCard(game: Game & { game_results?: ResultWithPlayer[] }): GameCardData {
   const results = sortResults(game.game_results ?? []);
-  const totalPot = results.reduce((sum, result) => sum + Math.max(0, Number(result.money_spent ?? 0)), 0);
+  const totalSpent = results.reduce((sum, result) => sum + Math.max(0, Number(result.money_spent ?? 0)), 0);
+  const totalEarned = results.reduce((sum, result) => sum + Math.max(0, Number(result.money_earned ?? 0)), 0);
+  const totalPot = totalSpent > 0 ? totalSpent : totalEarned;
   return {
     id: game.id,
     title: game.title,

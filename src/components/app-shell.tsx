@@ -2,7 +2,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { Menu } from "lucide-react";
 
-import { GlobalSearch } from "@/components/global-search";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
@@ -11,6 +10,7 @@ const navItems = [
   { href: "/leaderboard/money", label: "Money" },
   { href: "/leaderboard/points", label: "Performance" },
   { href: "/games", label: "Games" },
+  { href: "/profile", label: "Profile" },
   { href: "/info", label: "Info" },
   { href: "/admin", label: "Admin" },
 ];
@@ -40,9 +40,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               </Button>
             ))}
           </nav>
-          <div className="hidden md:block">
-            <GlobalSearch />
-          </div>
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="outline" size="icon" className="md:hidden">
@@ -51,7 +48,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </SheetTrigger>
             <SheetContent className="border-amber-500/20 bg-zinc-950 text-zinc-50">
               <div className="mt-8 grid gap-2">
-                <GlobalSearch />
                 {navItems.map((item) => (
                   <Button key={item.href} asChild variant="ghost" className="justify-start">
                     <Link href={item.href}>{item.label}</Link>

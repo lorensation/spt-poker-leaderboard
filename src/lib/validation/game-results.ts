@@ -1,4 +1,4 @@
-import { finishingPoints } from "@/lib/points";
+import { finishingPointsByPosition } from "@/lib/points";
 
 export type RawGameResultInput = {
   player_id?: unknown;
@@ -39,8 +39,7 @@ export function parseGamePayload(input: RawGamePayload): ValidationResult<Parsed
   if (rawResults.length < 2) return { success: false, message: "Add at least 2 players." };
 
   const playerIds = new Set<string>();
-  const qualifiedPositions = new Set<number>();
-  const results: ParsedGameResult[] = [];
+  const results: Omit<ParsedGameResult, "finishing_points">[] = [];
 
   for (const raw of rawResults) {
     const playerId = String(raw.player_id ?? "").trim();
@@ -50,31 +49,29 @@ export function parseGamePayload(input: RawGamePayload): ValidationResult<Parsed
 
     const finish = parseFinishPosition(raw.finish_position);
     if (finish === "invalid") return { success: false, message: "Each player needs a finish position or Not qualified." };
-    if (finish !== null) {
-      if (qualifiedPositions.has(finish)) {
-        return { success: false, message: "Qualified finish positions must be unique." };
-      }
-      qualifiedPositions.add(finish);
-    }
 
-    const moneySpent = parseMoney(raw.money_spent);
-    if (moneySpent === null) return { success: false, message: "Money spent must be 0 or more." };
-    const moneyEarned = parseMoney(raw.money_earned);
-    if (moneyEarned === null) return { success: false, message: "Money earned must be 0 or more." };
+    const moneySpent = parseMoneyAmount(raw.money_spent);
+    if (moneySpent === null) return { success: false, message: "Money spent must be 0 or a multiple of 5." };
+    const moneyEarned = parseMoneyAmount(raw.money_earned);
+    if (moneyEarned === null) return { success: false, message: "Money earned must be 0 or a multiple of 5." };
 
     results.push({
       player_id: playerId,
       finish_position: finish,
       money_spent: moneySpent,
       money_earned: moneyEarned,
-      finishing_points: finishingPoints(finish),
     });
   }
 
   const title = String(input.title ?? "").trim() || `Poker Night - ${playedAt}`;
   const notes = String(input.notes ?? "").trim() || null;
+  const points = finishingPointsByPosition(results.map((result) => result.finish_position));
+  const resultsWithPoints = results.map((result, index) => ({
+    ...result,
+    finishing_points: points[index],
+  }));
 
-  return { success: true, data: { title, played_at: playedAt, notes, results } };
+  return { success: true, data: { title, played_at: playedAt, notes, results: resultsWithPoints } };
 }
 
 export function parseGamePayloadFromFormData(formData: FormData): ValidationResult<ParsedGamePayload> {
@@ -100,9 +97,12 @@ function parseFinishPosition(value: unknown): number | null | "invalid" {
   return parsed;
 }
 
-function parseMoney(value: unknown) {
+export function parseMoneyAmount(value: unknown) {
   if (value === "" || value === null || value === undefined) return 0;
   const parsed = Number(value);
   if (!Number.isFinite(parsed) || parsed < 0) return null;
-  return Number(parsed.toFixed(2));
+  const cents = Math.round(parsed * 100);
+  if (Math.abs(parsed * 100 - cents) > 0.000001) return null;
+  if (cents % 500 !== 0) return null;
+  return cents / 100;
 }

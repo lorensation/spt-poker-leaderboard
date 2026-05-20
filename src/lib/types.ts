@@ -10,6 +10,17 @@ export type Player = {
   nickname: string;
   avatar_url: string | null;
   edit_token_hash?: string | null;
+  created_by_admin?: boolean;
+  created_at?: string;
+  updated_at?: string;
+};
+
+export type PlayerIdentity = {
+  id: string;
+  player_id: string;
+  email: string;
+  auth_user_id: string | null;
+  claimed_at: string | null;
   created_at?: string;
   updated_at?: string;
 };
@@ -80,4 +91,9 @@ export type GameDetailData = GameCardData & {
   votes: Array<GameVote & { voted_player?: Player; voter_player?: Player }>;
   vote_totals: Array<{ player: Player; points: number; firsts: number }>;
   mvp: { player: Player; points: number; firsts: number } | null;
+};
+
+export type PlayerVoteHistory = GameVote & {
+  games: { id: string; title: string; played_at: string };
+  voted_player: Player;
 };

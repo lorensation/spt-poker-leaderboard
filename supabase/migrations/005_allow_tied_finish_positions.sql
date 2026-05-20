@@ -1,0 +1,1 @@
+drop index if exists public.game_results_game_finish_position_qualified_key;

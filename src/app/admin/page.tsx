@@ -1,7 +1,7 @@
 import { AlertTriangle, LogOut } from "lucide-react";
 
 import { loginAdmin, logoutAdmin } from "@/app/actions/admin";
-import { AdminCreatePlayerForm, AdminGameActions, AdminPlayerActions } from "@/components/admin-action-forms";
+import { AdminCreatePlayerForm, AdminGameActions, AdminPlayersList } from "@/components/admin-action-forms";
 import { AdminGameForm } from "@/components/admin-game-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { isAdminSession } from "@/lib/security/admin";
 import { isAdminSupabaseConfigured } from "@/lib/supabase/server";
 import { getGames } from "@/lib/queries/games";
-import { getPlayers } from "@/lib/queries/players";
+import { getPlayerIdentities, getPlayers } from "@/lib/queries/players";
 
 export default async function AdminPage({
   searchParams,
@@ -42,7 +42,7 @@ export default async function AdminPage({
     );
   }
 
-  const [players, games] = await Promise.all([getPlayers(), getGames()]);
+  const [players, games, identities] = await Promise.all([getPlayers(), getGames(), getPlayerIdentities()]);
 
   return (
     <div className="space-y-6">
@@ -97,11 +97,8 @@ export default async function AdminPage({
 
         <Card className="border-amber-500/20 bg-zinc-950/80">
           <CardHeader><CardTitle>Manage players</CardTitle></CardHeader>
-          <CardContent className="space-y-3">
-            {players.map((player) => (
-              <AdminPlayerActions key={player.id} player={player} />
-            ))}
-            {players.length === 0 ? <p className="text-sm text-zinc-400">No players yet.</p> : null}
+          <CardContent>
+            <AdminPlayersList players={players} identities={identities} />
           </CardContent>
         </Card>
       </section>

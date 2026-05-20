@@ -1,20 +1,30 @@
-export function finishingPoints(position: number | null) {
+const FINISHING_POINTS = {
+  1: 25,
+  2: 20,
+  3: 15,
+  4: 10,
+  5: 8,
+  6: 6,
+  7: 4,
+  8: 2,
+  9: 1,
+} as Record<number, number>;
+
+export function finishingPoints(position: number | null, tiedPlayerCount = 1) {
   if (position === null) return 0;
-  return (
-    (
-      {
-        1: 10,
-        2: 8,
-        3: 7,
-        4: 6,
-        5: 5,
-        6: 4,
-        7: 3,
-        8: 2,
-        9: 1,
-      } as Record<number, number>
-    )[position] ?? 0
-  );
+  const basePoints = FINISHING_POINTS[position] ?? 0;
+  if (basePoints === 0) return 0;
+  return Math.max(0, basePoints - (tiedPlayerCount > 1 ? tiedPlayerCount : 0));
+}
+
+export function finishingPointsByPosition(positions: Array<number | null>) {
+  const counts = new Map<number, number>();
+  for (const position of positions) {
+    if (position === null) continue;
+    counts.set(position, (counts.get(position) ?? 0) + 1);
+  }
+
+  return positions.map((position) => finishingPoints(position, position === null ? 1 : counts.get(position) ?? 1));
 }
 
 export function votePoints(rank: 1 | 2 | 3) {
