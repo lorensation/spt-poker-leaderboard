@@ -12,7 +12,7 @@ import type { LeaderboardKind, PlayerStats } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 export function Podium({ players, kind }: { players: PlayerStats[]; kind: LeaderboardKind }) {
-  const ordered = [players[1], players[0], players[2]].filter(Boolean);
+  const ordered = players.slice(0, 3).filter(Boolean);
   if (ordered.length === 0) {
     return (
       <div className="rounded-lg border border-dashed border-amber-500/20 bg-white/3 p-8 text-center text-zinc-400">
@@ -23,7 +23,7 @@ export function Podium({ players, kind }: { players: PlayerStats[]; kind: Leader
 
   return (
     <div className="grid gap-4 md:grid-cols-3 md:items-end">
-      {ordered.map((player) => {
+      {ordered.map((player, index) => {
         const rank = kind === "money" ? player.money_rank : player.performance_rank;
         return (
           <motion.div
@@ -31,7 +31,7 @@ export function Podium({ players, kind }: { players: PlayerStats[]; kind: Leader
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: rank * 0.08 }}
-            className={cn(rank === 1 && "md:-mt-5 md:pb-5")}
+            className={cn(podiumOrderClass(index), rank === 1 && "md:-mt-5 md:pb-5")}
           >
             <Card className={cn("border-amber-500/20 bg-zinc-950/80", rank === 1 && "border-amber-300/60")}>
               <CardContent className="flex flex-col items-center gap-3 p-5 text-center">
@@ -61,4 +61,11 @@ export function Podium({ players, kind }: { players: PlayerStats[]; kind: Leader
       })}
     </div>
   );
+}
+
+function podiumOrderClass(index: number) {
+  if (index === 0) return "md:order-2";
+  if (index === 1) return "md:order-1";
+  if (index === 2) return "md:order-3";
+  return "";
 }

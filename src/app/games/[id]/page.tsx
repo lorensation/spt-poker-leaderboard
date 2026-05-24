@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Star, Trophy } from "lucide-react";
 
 import { GameResultEditor } from "@/components/game-result-editor";
+import { MoneyValue } from "@/components/money-value";
 import { PlayerAvatar } from "@/components/player-avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -69,9 +70,9 @@ export default async function GameDetailPage({ params }: { params: Promise<{ id:
                         {result.players.nickname}
                       </Link>
                     </TableCell>
-                    <TableCell className="text-right font-mono">{formatCurrency(result.money_spent)}</TableCell>
-                    <TableCell className="text-right font-mono">{formatCurrency(result.money_earned)}</TableCell>
-                    <TableCell className="text-right font-mono">{formatCurrency(result.net_profit)}</TableCell>
+                    <TableCell className="text-right"><MoneyValue value={result.money_spent} variant="spent" /></TableCell>
+                    <TableCell className="text-right"><MoneyValue value={result.money_earned} variant="earned" /></TableCell>
+                    <TableCell className="text-right"><MoneyValue value={result.net_profit} variant="net" /></TableCell>
                     <TableCell className="text-right">{result.finishing_points}</TableCell>
                     <TableCell className="text-right">{voteTotal}</TableCell>
                   </TableRow>

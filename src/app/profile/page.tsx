@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { logoutPlayer } from "@/app/actions/auth";
+import { MoneyValue } from "@/components/money-value";
 import { PlayerAvatar } from "@/components/player-avatar";
 import { PlayerProfileEditor } from "@/components/player-profile-editor";
 import { Badge } from "@/components/ui/badge";
@@ -87,9 +88,9 @@ export default async function ProfilePage() {
                   <TableCell>{formatDate(result.games.played_at)}</TableCell>
                   <TableCell><Link className="hover:text-amber-200" href={`/games/${result.games.id}`}>{result.games.title}</Link></TableCell>
                   <TableCell className="text-right">{result.finish_position === null ? "NQ" : `#${result.finish_position}`}</TableCell>
-                  <TableCell className="text-right font-mono">{formatCurrency(result.money_spent)}</TableCell>
-                  <TableCell className="text-right font-mono">{formatCurrency(result.money_earned)}</TableCell>
-                  <TableCell className="text-right font-mono">{formatCurrency(result.net_profit)}</TableCell>
+                  <TableCell className="text-right"><MoneyValue value={result.money_spent} variant="spent" /></TableCell>
+                  <TableCell className="text-right"><MoneyValue value={result.money_earned} variant="earned" /></TableCell>
+                  <TableCell className="text-right"><MoneyValue value={result.net_profit} variant="net" /></TableCell>
                   <TableCell className="text-right">{result.finishing_points}</TableCell>
                 </TableRow>
               ))}
