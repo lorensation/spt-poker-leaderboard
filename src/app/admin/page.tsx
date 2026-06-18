@@ -1,4 +1,5 @@
-import { AlertTriangle, LogOut } from "lucide-react";
+import Link from "next/link";
+import { AlertTriangle, Clock, LogOut } from "lucide-react";
 
 import { loginAdmin, logoutAdmin } from "@/app/actions/admin";
 import { AdminCreatePlayerForm, AdminGameActions, AdminPlayersList } from "@/components/admin-action-forms";
@@ -64,6 +65,21 @@ export default async function AdminPage({
           </CardContent>
         </Card>
       ) : null}
+
+      <Card className="border-amber-500/20 bg-zinc-950/80">
+        <CardContent className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <div className="flex items-center gap-2 font-semibold">
+              <Clock className="h-5 w-5 text-amber-200" />
+              Poker Clock
+            </div>
+            <p className="mt-1 text-sm text-zinc-400">Configure and control the public tournament clock.</p>
+          </div>
+          <Button asChild>
+            <Link href="/admin/clock-partida">Open clock admin</Link>
+          </Button>
+        </CardContent>
+      </Card>
 
       <section className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
         <Card className="border-amber-500/20 bg-zinc-950/80">

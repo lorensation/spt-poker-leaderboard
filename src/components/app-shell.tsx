@@ -10,6 +10,7 @@ const navItems = [
   { href: "/leaderboard/money", label: "Money" },
   { href: "/leaderboard/points", label: "Performance" },
   { href: "/games", label: "Games" },
+  { href: "/clock-partida", label: "Clock" },
   { href: "/profile", label: "Profile" },
   { href: "/info", label: "Info" },
   { href: "/admin", label: "Admin" },
