@@ -4,6 +4,7 @@ import {
   applyClockControl,
   formatClockTime,
   formatPokerLevel,
+  normalizePokerClockLevels,
   pokerClockStats,
   remainingSecondsForState,
   type PokerClockState,
@@ -12,9 +13,9 @@ import {
 const baseState: PokerClockState = {
   id: "default",
   levels: [
-    { type: "blind", durationSeconds: 1200, smallBlind: 200, bigBlind: 400 },
+    { type: "blind", durationSeconds: 1200, smallBlind: 200, bigBlind: 400, ante: 200 },
     { type: "break", durationSeconds: 600, label: "BREAK" },
-    { type: "blind", durationSeconds: 1200, smallBlind: 500, bigBlind: 1000 },
+    { type: "blind", durationSeconds: 1200, smallBlind: 500, bigBlind: 1000, ante: 500 },
   ],
   current_level_index: 0,
   status: "idle",
@@ -36,8 +37,13 @@ describe("poker clock", () => {
   });
 
   it("formats blind and break levels", () => {
-    expect(formatPokerLevel(baseState.levels[0])).toBe("200 / 400");
+    expect(formatPokerLevel(baseState.levels[0])).toBe("200 / 400 / 200");
     expect(formatPokerLevel(baseState.levels[1])).toBe("BREAK");
+  });
+
+  it("defaults missing ante to the small blind for existing levels", () => {
+    const levels = normalizePokerClockLevels([{ type: "blind", durationSeconds: 1200, smallBlind: 200, bigBlind: 400 }]);
+    expect(formatPokerLevel(levels[0])).toBe("200 / 400 / 200");
   });
 
   it("derives remaining seconds from running state", () => {

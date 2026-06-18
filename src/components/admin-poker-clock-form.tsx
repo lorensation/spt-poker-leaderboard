@@ -28,6 +28,7 @@ type LevelRow = {
   durationMinutes: string;
   smallBlind: string;
   bigBlind: string;
+  ante: string;
   label: string;
 };
 
@@ -177,7 +178,7 @@ export function AdminPokerClockForm({ initialState }: { initialState: PokerClock
         </CardHeader>
         <CardContent className="space-y-3">
           {rows.map((row, index) => (
-            <div key={row.id} className="grid gap-3 rounded-lg border border-white/10 bg-white/[0.03] p-3 lg:grid-cols-[5rem_8rem_1fr_1fr_1fr_auto] lg:items-end">
+            <div key={row.id} className="grid gap-3 rounded-lg border border-white/10 bg-white/[0.03] p-3 lg:grid-cols-[5rem_8rem_1fr_1fr_1fr_1fr_auto] lg:items-end">
               <div className="text-sm font-semibold text-zinc-400">#{index + 1}</div>
               <div className="space-y-2">
                 <Label>Type</Label>
@@ -193,7 +194,7 @@ export function AdminPokerClockForm({ initialState }: { initialState: PokerClock
               </div>
               <NumberField label="Minutes" value={row.durationMinutes} onChange={(value) => updateRow(setRows, index, { durationMinutes: value })} min={1} />
               {row.type === "break" ? (
-                <div className="space-y-2 lg:col-span-2">
+                <div className="space-y-2 lg:col-span-3">
                   <Label>Label</Label>
                   <Input value={row.label} onChange={(event) => updateRow(setRows, index, { label: event.target.value })} placeholder="BREAK" />
                 </div>
@@ -201,6 +202,7 @@ export function AdminPokerClockForm({ initialState }: { initialState: PokerClock
                 <>
                   <NumberField label="Small blind" value={row.smallBlind} onChange={(value) => updateRow(setRows, index, { smallBlind: value })} />
                   <NumberField label="Big blind" value={row.bigBlind} onChange={(value) => updateRow(setRows, index, { bigBlind: value })} />
+                  <NumberField label="Ante" value={row.ante} onChange={(value) => updateRow(setRows, index, { ante: value })} />
                 </>
               )}
               <Button
@@ -271,6 +273,7 @@ function levelToRow(level: PokerClockLevel, index: number): LevelRow {
       durationMinutes: String(Math.max(1, Math.round(level.durationSeconds / 60))),
       smallBlind: "",
       bigBlind: "",
+      ante: "",
       label: level.label,
     };
   }
@@ -281,6 +284,7 @@ function levelToRow(level: PokerClockLevel, index: number): LevelRow {
     durationMinutes: String(Math.max(1, Math.round(level.durationSeconds / 60))),
     smallBlind: String(level.smallBlind),
     bigBlind: String(level.bigBlind),
+    ante: String(level.ante),
     label: "BREAK",
   };
 }
@@ -295,6 +299,7 @@ function rowToLevel(row: LevelRow): PokerClockLevel | null {
     durationSeconds,
     smallBlind: Math.max(0, Math.floor(Number(row.smallBlind) || 0)),
     bigBlind: Math.max(0, Math.floor(Number(row.bigBlind) || 0)),
+    ante: Math.max(0, Math.floor(Number(row.ante) || 0)),
   };
 }
 
@@ -305,6 +310,7 @@ function createBlindRow(): LevelRow {
     durationMinutes: "20",
     smallBlind: "100",
     bigBlind: "200",
+    ante: "100",
     label: "BREAK",
   };
 }
@@ -316,6 +322,7 @@ function createBreakRow(): LevelRow {
     durationMinutes: "10",
     smallBlind: "",
     bigBlind: "",
+    ante: "",
     label: "BREAK",
   };
 }

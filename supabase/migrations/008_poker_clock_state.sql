@@ -41,12 +41,12 @@ insert into public.poker_clock_state (
 ) values (
   'default',
   '[
-    {"type":"blind","durationSeconds":1200,"smallBlind":100,"bigBlind":200},
-    {"type":"blind","durationSeconds":1200,"smallBlind":200,"bigBlind":400},
-    {"type":"blind","durationSeconds":1200,"smallBlind":300,"bigBlind":600},
+    {"type":"blind","durationSeconds":1200,"smallBlind":100,"bigBlind":200,"ante":100},
+    {"type":"blind","durationSeconds":1200,"smallBlind":200,"bigBlind":400,"ante":200},
+    {"type":"blind","durationSeconds":1200,"smallBlind":300,"bigBlind":600,"ante":300},
     {"type":"break","durationSeconds":600,"label":"BREAK"},
-    {"type":"blind","durationSeconds":1200,"smallBlind":500,"bigBlind":1000},
-    {"type":"blind","durationSeconds":1200,"smallBlind":1000,"bigBlind":2000}
+    {"type":"blind","durationSeconds":1200,"smallBlind":500,"bigBlind":1000,"ante":500},
+    {"type":"blind","durationSeconds":1200,"smallBlind":1000,"bigBlind":2000,"ante":1000}
   ]'::jsonb,
   0,
   'idle',

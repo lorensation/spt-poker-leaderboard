@@ -8,6 +8,7 @@ export type PokerClockBlindLevel = {
   durationSeconds: number;
   smallBlind: number;
   bigBlind: number;
+  ante: number;
 };
 
 export type PokerClockBreakLevel = {
@@ -40,12 +41,12 @@ export type PokerClockDerivedStats = {
 };
 
 export const defaultPokerClockLevels: PokerClockLevel[] = [
-  { type: "blind", durationSeconds: 20 * 60, smallBlind: 100, bigBlind: 200 },
-  { type: "blind", durationSeconds: 20 * 60, smallBlind: 200, bigBlind: 400 },
-  { type: "blind", durationSeconds: 20 * 60, smallBlind: 300, bigBlind: 600 },
+  { type: "blind", durationSeconds: 20 * 60, smallBlind: 100, bigBlind: 200, ante: 100 },
+  { type: "blind", durationSeconds: 20 * 60, smallBlind: 200, bigBlind: 400, ante: 200 },
+  { type: "blind", durationSeconds: 20 * 60, smallBlind: 300, bigBlind: 600, ante: 300 },
   { type: "break", durationSeconds: 10 * 60, label: "BREAK" },
-  { type: "blind", durationSeconds: 20 * 60, smallBlind: 500, bigBlind: 1000 },
-  { type: "blind", durationSeconds: 20 * 60, smallBlind: 1000, bigBlind: 2000 },
+  { type: "blind", durationSeconds: 20 * 60, smallBlind: 500, bigBlind: 1000, ante: 500 },
+  { type: "blind", durationSeconds: 20 * 60, smallBlind: 1000, bigBlind: 2000, ante: 1000 },
 ];
 
 export const fallbackPokerClockState: PokerClockState = {
@@ -139,7 +140,7 @@ export function formatClockTime(seconds: number) {
 export function formatPokerLevel(level: PokerClockLevel | null | undefined) {
   if (!level) return "No level";
   if (level.type === "break") return level.label.trim() || "BREAK";
-  return `${level.smallBlind} / ${level.bigBlind}`;
+  return `${level.smallBlind} / ${level.bigBlind} / ${level.ante}`;
 }
 
 export function applyClockControl(state: PokerClockState, control: "start" | "pause" | "resume" | "reset" | "next" | "previous", now = new Date()) {
@@ -219,11 +220,13 @@ function normalizePokerClockLevel(level: unknown): PokerClockLevel | null {
   }
 
   if (record.type === "blind") {
+    const smallBlind = Math.max(0, normalizeNonNegativeInteger(record.smallBlind));
     return {
       type: "blind",
       durationSeconds,
-      smallBlind: Math.max(0, normalizeNonNegativeInteger(record.smallBlind)),
+      smallBlind,
       bigBlind: Math.max(0, normalizeNonNegativeInteger(record.bigBlind)),
+      ante: Math.max(0, normalizeNonNegativeInteger(record.ante, smallBlind)),
     };
   }
 
